@@ -27,7 +27,7 @@ app.use(express.static('./public'));
 /////////////
 //need to update to match to a database I have access to
 // const massiveInstance = massive.connectSync({connectionString: 'postgres://localhost/sandbox'})
-var connectionString = "postgres://postgres:" + pgresPwrd + "@localhost:5433/Massivedemo";
+var connectionString = "postgres://postgres:" + config.pgresPwrd + "@localhost:5433/Massivedemo";
 var massiveInstance = massive.connectSync({connectionString: connectionString});
 app.set('db', massiveInstance);
 
