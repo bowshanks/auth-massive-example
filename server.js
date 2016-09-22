@@ -22,15 +22,20 @@ app.use(express.static('./public'));
 
 
 
-/////////////
+///////////////
 // DATABASE //
 /////////////
-const massiveInstance = massive.connectSync({connectionString: 'postgres://localhost/sandbox'})
+//need to update to match to a database I have access to
+// const massiveInstance = massive.connectSync({connectionString: 'postgres://localhost/sandbox'})
+var connectionString = "postgres://postgres:" + pgresPwrd + "@localhost:5433/Massivedemo";
+var massiveInstance = massive.connectSync({connectionString: connectionString});
+app.set('db', massiveInstance);
 
 app.set('db', massiveInstance);
 const db = app.get('db');
 
-// db.create_user(function(err, user) {
+// this is just one time to add a user to the database just for example
+// db.createUser(function(err, user) {
 //   if (err) console.log(err);
 //   else console.log('CREATED USER');
 //   console.log(user);
@@ -52,7 +57,7 @@ passport.use(new LocalStrategy(
 passport.use(new FacebookStrategy({
   clientID: config.facebook.clientID,
   clientSecret: config.facebook.clientSecret,
-  callbackURL: "http://localhost:3000/auth/facebook/callback",
+  callbackURL: "http://localhost:" + config.port + "/auth/facebook/callback",
   profileFields: ['id', 'displayName']
 },
 function(accessToken, refreshToken, profile, cb) {
@@ -62,19 +67,22 @@ function(accessToken, refreshToken, profile, cb) {
       console.log('CREATING USER');
       db.createUserFacebook([profile.displayName, profile.id], function(err, user) {
         console.log('USER CREATED', user);
-        return cb(err, user);
+        return done(err, user); //done was cb
       })
     } else {
-      return cb(err, user);
+      return done(err, user); //done was cb
     }
   })
 }));
 
+// used when leaveing the server
 passport.serializeUser(function(user, done) {
-  done(null, user.userid);
+  done(null, user.id);
 })
 
+// used when coming into the server
 passport.deserializeUser(function(id, done) {
+  // need to fix here
   db.getUserById([id], function(err, user) {
     user = user[0];
     if (err) console.log(err);
@@ -84,7 +92,9 @@ passport.deserializeUser(function(id, done) {
   })
 })
 
+
 app.post('/auth/local', passport.authenticate('local'), function(req, res) {
+   // Use passport local strategy if success 200 else 401
   res.status(200).send();
 });
 
@@ -95,16 +105,19 @@ app.get('/auth/facebook/callback',
     res.status(200).send(req.user);
   })
 
+
 app.get('/auth/me', function(req, res) {
+   // Return the user object stored in the session
   if (!req.user) return res.sendStatus(404);
   res.status(200).send(req.user);
 })
+
 
 app.get('/auth/logout', function(req, res) {
   req.logout();
   res.redirect('/');
 })
 
-app.listen(3000, function() {
-  console.log('Connected on 3000')
+app.listen(config.port,function(){
+  console.log('listening on port'+config.port)
 })

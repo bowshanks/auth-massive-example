@@ -1,7 +1,6 @@
 {
   "name": "auth-massive",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,12 +11,21 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "cors": "^2.7.1",
+    "cors": "^2.8.1",
     "express": "^4.14.0",
-    "express-session": "^1.14.0",
+    "express-session": "^1.14.1",
     "massive": "^2.5.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-local": "^1.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bowshanks/auth-massive-example.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bowshanks/auth-massive-example/issues"
+  },
+  "homepage": "https://github.com/bowshanks/auth-massive-example#readme",
+  "description": ""
 }
